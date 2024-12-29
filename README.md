@@ -14,4 +14,33 @@ I began exploring the crawl_links.py file and followed the file lineage to reall
 
 Day 3:
 Today is a continuation of yesterday with the creation and typing of the file system. Already I have begun to understand how the crawler uses the different document classes to create and access mongodb for NoSQL documents. I have written many files that perform various functions for the etl pipeline. Today my plan is to keep writing with the goal of finishing the digital_data_etl.py file and all of its dependencies. Over the next couple of days when I finish these files I plan on attempting to run the pipeline from the book but with my own data. I should be able to get the mongo db connection and the docker containers up and running without using the authors full file set, hopefully. From there I will continue building each pipeline and building my own personal LLM Twin.
+    
+    Important Notes:
+        - Based on todays creation of the first pipeline being used via Zenml I want to make my knowledge more concrete by writing out my thoughts and understanding.
+        - The authors have created the file system intricately such that we can use any orchestrator to execute the knowledge neccessary to run the pipelines.
+        - What does this mean?
+            - It means that all of the @pipeline steps and @step portions of the pipeline are stored seperately from the pipelines module in the llm_engineering file folder.
+            - This allows the user to easily switch orchestrators if neccessary since all of the application and domain logic is stored in llm_engineering and the zenml orchestrator logic is stored in the pipelines and steps folders. So, to make the switch I would only need to change the zenml code, not the full logic.
+            - Within the steps and pipeline module, they only used the things needed from the llm_engineering module, this keeps the logic seperate.
+        - Values that are to be returned from zenml have to be serializable, meaning that it can be converted to a format suitable for storage or transmission and later reconstructed (derserialized) into its original form.
+        - All data and artifacts along with their metadata are stored in the zenml dashboard and can be viewed there.
+        - Metadata is added manually to the artifact allowing me to precompute and attach anything that is helpful for dataset discovery across projects.
+        - run.py
+            - everything for zenml can be run via this file. 
+            - Given that this file holds and entails all of the pipelines and commands within the code, I want to save writing this file until I have fully finished the book and all of the logic, pipelines, etc.
+        - MongoDB is chosen as the storage location for the etl pipeline because not many documents are used in the proof of concept. Thus small scale statistics can be calculated and little cost incurred. Should the twin be scaled out to include millions of documents or more then a large scale data warehouse such as Snowflake or BigQuery should be used.
+        - Each of the crawler classes implements custom logic to access the articles, posts and repositories with the exception of the CustomArticleCrawler.
+            - GithubCrawler - Crawls and stores Github repos
+            - MediumCrawler - Crawls and stored medium articles based on html.
+            - LinkedInCrawler - Crawls and stores linked in posts.
+            - CustomArticleCrawler - Crawls articles outside of the designated domains for the other crawlers. (No Custom logic-primarily a fallback)
+            - I coded each of these crawlers, later to find out that based on the sources I will be using for my data, I will not be using the CustomArticleCrawler or the MediumCrawler. 
+                - The Custom crawler uses LangChain packages as a fallback method to crawl different domains and is generally not used in production environments anyway.
+        
+
+        
+
+
+
+
 
