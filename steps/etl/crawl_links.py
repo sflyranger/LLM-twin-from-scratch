@@ -1,6 +1,7 @@
 from urllib.parse import urlparse
 
 from loguru import logger
+from tqdm import tqdm
 from typing_extensions import Annotated
 from zenml import get_step_context, step
 
