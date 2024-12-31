@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from tempfile import mkdtemp
 
 import chromedriver_autoinstaller
-from selenium import webdriver
+from selenium import webdriver # tool used for automating web browsers
 from selenium.webdriver.chrome.options import options
 
 from llm_engineering.domain.documents import NoSQLBaseDocument

@@ -9,6 +9,10 @@ from llm_engineering.domain.documents import ArticleDocument
 from .base import BaseCrawler
 
 # Creating the CustomArticleCrawler class that inherits from the BaseCrawler class
+# this crawler doesn't implement any custom logic because it is not one of the primary methods.
+# AsynHtmlLoader and Html2TextTransformer are difficult to use and customize in production environments so thats why this is a fallback.
+# Most if not all of our documents may not even use this logic to begin with. In my case, none of my documents do.
+# This class is coded for learning purposes only.
 class CustomArticleCrawler(BaseCrawler):
     model = ArticleDocument # sets the model attribute to be an ArticleDocument
 

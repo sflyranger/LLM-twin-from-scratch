@@ -70,6 +70,22 @@ I coded each of these crawlers, later to find out that based on the sources I wi
 
 - The `CustomArticleCrawler` uses LangChain packages as a fallback method to crawl different domains and is generally not used in production environments anyway.
 
+#### ORM:
+ ORM is a technique that lets you query and manipulate data from a db. Instead of writing SQL or API queries all of the complexity if captured by an ORM class that handles all of the underlyring database operations. This removes the manual coding of database operations and reduces the need to write all of the underlying code needed to perform them.
+
+ ORMs interact with SQL databases such as PostgreSQL or MySQL. 
+
+#### ODM:
+
+ ODM works similarly to ORM but instead of connecting to SQL databases it connects to NoSQL databases. In this project I am working with unstructured data so the data structure is centered on collections. These collections store JSON like documents rather than rows and columns in tables. It simplifies working with NoSQL databases and maps object-oriented code to JSON like documents. This is the type of module that is implemented in the nosql.py file.
+ 
+ The class in this file is called NoSQLBaseDocument and is used as the base class to store all of the objects brought in by each of the crawlers.
+
+#### Conclusions:
+ By using the ODM class and its stored settings for each document in coordination with the zenml artifacts I can more modularly debug my code, monitor and trace the results and metadata for each pipeline. 
+ 
+
+
     
 
         
