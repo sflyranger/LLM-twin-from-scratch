@@ -136,3 +136,18 @@ For each state their are individual subclasses for the different data categories
 
 
 
+
+Within each of the subclasses in for the different states there are internal Config classes that point to the given settings for each type of document. This allows me to accurately define each document after storing in the vector db. Also, an enum is defined to aggregate all of the data categories into a single structure.
+
+##### OVM class (VectorBaseDocument)
+This is the OVM base class that will be used to structure a single record's attributes from the vector database. It is initialized as type UUID4 as the unique identifyer and inherits from Pydantics BaseModel class, ABC, and pythons Generic[T] class. This means that all subclasses will adapt, and inherit the settings of this class. If you are curious and want to see more about the structure of this class, please go look at the code as I have documented each of their functions and usage.
+
+#### Qdrant 
+The authors chose this vector database as the one to be implemented for the LLM-twin because it is "one of the most popular, robust and feature-rich databases." It was chosen because of how light it is and has a standing in the industry that sets a precedent that it will be around for many years to come. Qdrant is also used by many of the big players in the industry such as Disney, Microsoft, and Discord. It offers the best trade off between RPS (Requests per Second), latency, and index time. This allows querying and indexing of vectors to be quick and efficient for the LLM twin training and generation process.
+
+#### Conclusions:
+
+The Rag feature pipeline serves as a quick and efficient method of cleaning, chunking, embedding and storing the features into Qdrant in a way that is modular and follows MLOps best practices and principles. It will allow me to make changes in the code without having to modify then entire code base because all of the classes are wrapped and work together to support a generic design. In future projects when I want to create a production ready llm, these principles and coding structures will allow me to make simple and efficient modifications.
+
+Next I will begin learning about how to create custom datasets to train my llm-twin.
+
