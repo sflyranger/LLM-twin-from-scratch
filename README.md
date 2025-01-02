@@ -120,6 +120,9 @@ The way this step works is based on using different dispatchers based on the col
 Each state has a base class that inherits from a VectorBaseDocument class. They also inherit from the abstract base class (ABC) which means objects cannot be initialized out of these classes, they can only inherit from them. 
 
 For each state their are individual subclasses for the different data categories. The authors gave a reference image for this but I will draw one of my own to imitate and ensure my understanding. 
+
+![image](https://github.com/user-attachments/assets/495d652e-c29d-4a74-af0f-b004298d385a)
+
  
 
 
