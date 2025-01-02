@@ -151,3 +151,35 @@ The Rag feature pipeline serves as a quick and efficient method of cleaning, chu
 
 Next I will begin learning about how to create custom datasets to train my llm-twin.
 
+
+### Day 7:
+#### Supervised Finetuning
+Supervised finetuning is way to take a pre-trained existing llm and finetune it for a potential use case. In this case I want to be able to instruction tune my model on question answer pairs to improve the accuracy of responses from my llm-twin. For Chapter 5, I will be learning how to create a high quality instruction dataset, implement SFT techniques and implement fine-tuning in practice. I have implemented supervised fine-tuning techniques before for text-classification tasks but I have never instruction-tuned a model using the question answer pairs. This will be a great learning experience.
+
+#### Creating an instruction tuned dataset
+This is one of the most difficult parts of the fine-tuning process becuase I will need to transform my text into a format that supports both instructions and answers. Data quality is crucial. So there needs to be extensive modifications and monitoring to ensure this quality is obtained. 
+
+Quick Bullets about the general framework of creating the dataset.
+  - Can be trained on both instructions and answers or answers only. 
+  - Instructions can be broken into multiple fields (System, Instruction and Output)
+    - System provides metadata context to steer the llm in a general direction.
+    - Instruction provides the necessary data and a task.
+    - The Output shows the expected answer from the given inputs.
+  - Data quality can be divided into three primary domains.
+    - Accuracy: Factual correctness
+    - Diversity: Encompasses a wide range of use cases
+    - Complexity: Should include multi-step reasoning problems to push boundaries of the model.
+  - Smaller models require more high-quality samples, larger models require less.
+  - Good fine-tunes require around 1 million samples.
+  - For specialized fine tuning less is required.
+  - ##### Task Specific Models:
+    - Designed to excel at one particular function (translation, summarization, etc)
+    - Efficient performance even with smaller models.
+    - Anywhere between 100 and 100,000 samples.
+  - ##### Domain Specific Models:
+    - Aimed to fix the model towards more specialized linguistics in a particular field.
+    - Sample size depends on the breadth of the technical corpora.
+    - Data Curation can be more challenging.
+  - Few shot prompting can be a viable alternative to fine-tuning, it depends on the use case.
+  - ###### Rule Based filtering:
+    -
