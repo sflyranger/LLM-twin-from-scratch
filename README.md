@@ -94,6 +94,32 @@ I coded each of these crawlers, later to find out that based on the sources I wi
  I made many classes including the metaclasses used to ensure consistency when making connections via Qdrant on multithreaded systems. This was something entirely new I learned about network connections. I didn't know what a lock object or a metaclass was until today. Apparently lock objects, prevent multiple instances of the same class from being created before the first established connection is entirely finished with the process. As I mentioned before, this metaclass, `SingletonMeta`, represents the base class for all vector based storage in the Qdrant database, because all other subclasses involved in the cleaning step inherit from this subclass. Also, all of the cleaning, chunking and dispatching involves intricate connections between these subclasses. In short, without establishing this connection, any of my instances could become corrupted due to parallel creation. 
 
  ####
+ ### Day 5 and 6:
+
+Today I finished hardcoding the full `feature_engineering.py` pipeline. This pipeline is broken down into four primary .py files. I will go into a bit of detail about them and how they all work together to push the features from the extracted documents in Mongo DB into Qdrant via a Zenml Orchestrator pipeline.
+
+#### `query_data_warehouse.py`
+
+This file serves as a Zenml step to fetch all of the raw data for the user from the data warehouse (Mongo DB). It is designed to take each of my document classes and fetch all of the data for those classes. My data will consist of LinkedIn posts and GitHub repositories only but there is functionality included to pull Articles from Medium and other domains as well. In this step, the data is pulled in parallel processes to increase efficiency. Alongside the actual content from each document, the metadata is efficiently stored in dictionaries for monitoring and use in the Zenml dashboard.
+
+#### `clean.py`
+
+This file serves as a Zenml step to take the queried documents from the `query_data_warehouse.py` step and clean for further transforming and processing. Here we are iterating through all of the documents and delegating all of the cleaning logic to subclasses of a created CleaningDispatcher class. Each subclass is designed to take and clean documents for each of their respective categories. Here the metadata for these cleaned documents is also stored for monitoring. 
+
+#### `rag.py`
+This file serves as the next Zenml step to take the cleaned documents and chunk and embed them based on an overlap procedure. Overlapping allows for faster searching when stored in a vector db becuase of pieces of the same text being found in multiple chunks. The chunk settings here will be experimented with when I run the full project to improve the results of my LLM-Twin responses. The authors used a chunk size of 500 and an overlap of 50, but since my dataset is smaller I may opt to go with smaller sizes and overlap parameters. Each chunk also contains its chunk metadata and embedding metadata. 
+
+#### `load_to_vector_db.py`
+
+This file serves as the final Zenml step in the pipeline. Its function is to take the cleaned, embedded, and chunked documents and load them into our selected vector database. Qdrant is the selected vector database for this project, and since I have never used a vector database, I don't really have much of a preference for which is best, more on Qdrant below.
+
+The way this step works is based on using different dispatchers based on the collection each article, post or code repository is stored in. All documents must be grouped by their data category and then loaded in bulk to the Qdrant DB. For this the authors introduced Pydantic, which is the go-to Python package for writing data structures with out-of-the-box type validation. In short, pydantic allows me to use Domain Driven Design principles to construct the correct hiearchy of the domain I am working with. Simply put, I can divide this step into two different domains. 
+  - The data category: Article, Post, Repo
+  - The data state: Cleaned, Embedded, Chunked
+
+Each state has a base class that inherits from a VectorBaseDocument class. They also inherit from the abstract base class (ABC) which means objects cannot be initialized out of these classes, they can only inherit from them. 
+
+For each state their are individual subclasses for the different data categories. The authors gave a reference image for this but I will draw one of my own to imitate and ensure my understanding. 
  
 
 
