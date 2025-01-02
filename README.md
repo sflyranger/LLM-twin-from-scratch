@@ -152,7 +152,7 @@ Within each of the subclasses in for the different states there are internal Con
 
 ---
 
-##### OVM class (VectorBaseDocument)
+#### OVM class (VectorBaseDocument)
 This is the OVM base class that will be used to structure a single record's attributes from the vector database. It is initialized as type UUID4 as the unique identifyer and inherits from Pydantics BaseModel class, ABC, and pythons Generic[T] class. This means that all subclasses will adapt, and inherit the settings of this class. If you are curious and want to see more about the structure of this class, please go look at the code as I have documented each of their functions and usage.
 
 ---
@@ -201,8 +201,8 @@ Quick Bullets about the general framework of creating the dataset.
     - Sample size depends on the breadth of the technical corpora.
     - Data Curation can be more challenging.
   - Few shot prompting can be a viable alternative to fine-tuning, it depends on the use case.
-  - ###### Rule Based filtering:
-    - Relies o explicit, pre-defined rules to evaluate and filter data samples.
+  - ##### Rule Based filtering:
+    - Relies on explicit, pre-defined rules to evaluate and filter data samples.
     - Length filtering sets thresholds for the acceptable length of responses in the dataset.
       - Extremely short responses often lack the neccessary information needed.
       - Extremely long responses may contain irrelevant or redundant information.
@@ -210,4 +210,44 @@ Quick Bullets about the general framework of creating the dataset.
     - Keyword exclusion focuses on the sample content rather than structure.
       - Creates a list of keywords or phrases for low-quality content and then filters out samples that contain them.
     - Format checking ensures that all of the samples meet a designated format. (Important for code checking etc.)
+  - ##### Data Deduplication
+    - Duplicates can lead to:
+      - Overfitting - Memorization
+      - Biased Performance - Skewing
+      - Inefficient training - Increased training time
+      - Inflated evaluation metrics - Overly optimistic performance.
+    - Finding and removing exact duplicates can be done using MD5, of SHA-256 hashing algorithms
+    - Normalization of text can help with finding duplicates as well.
+    - Fuzzy deduplication can be done best through MinHash.
+        - Generates compact representations for the data.
+        - Help capture the essence of the data while reducing dimensionality.
+        - Transforms data into shingles, applies hashes on those and selects min hash values to form signature vectors.
+        - Vectors can be compared via Jaccardian similarity to measure overlap.
+    - Semantic similarity focuses on the meaning of text for deduplication.
+      - Converts words and entire samples to vector representations where Word2Vec, Glove, and FastText can be used to find semantic relationships.
+    - BERT and other LLMs can also be used to find the similarity of word or document vectors as well.
+      - Cosine (angular distance) and Euclidean similarity used here. 
+      -  Clusters can also be formed for Vectors via K-means, DBSCAN or hierarchical clustering.
+  - ##### Data Decontamination
+    - This is done by ensuring that there is no overlap between training and evaluation anf test sets.
+    - Can be done through exact matching (hashing or string comparisons).
+    - Can also be done via similarity methods or MinHashing.
+    - This can be done easily by performing proper deduplication.
+    - Automation of this process is ideal in production environments.
+  - ##### Data Quality Evaluation:
+    - Human quality assessments can be used but consume resources.
+    - LLMs can be used as a judge by including different prompt domains to rate the quality.
+      - There is inherent bias here because the LLM's generally favor the first answer.
+      - They have intra model favoritism, favoring models from the same family of models.
+        - Multiple models can be used to address this.
+      - For chatbots we want the human ratings and LLM ratings to agree on the quality (80% of the time).
+    - Reward models can also be used giving a score as an output for the quality.
+      - Takes multiple scores from specific dimensions, refer to ArmoRM architechture.
+  - ##### Data Exploration
+    - Manual Exploration can be time-consuming but is still important.
+      - Reveals errors that can occur from automated proceses.
+    - Statistical analysis can reveal insights into the vocabulary density, biases and correct representation.
+    - Clustering based on topics can also be used to examine which topics are the mentioned most often and reveal biases and subtopics within different coding languages.
     - 
+    - 
+Reference: LLM-Engineers-Handbook: Packt Publishing
