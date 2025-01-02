@@ -84,30 +84,41 @@ I coded each of these crawlers, later to find out that based on the sources I wi
 #### Conclusions:
  By using the ODM class and its stored settings for each document in coordination with the zenml artifacts I can more modularly debug my code, monitor and trace the results and metadata for each pipeline. 
  
+---
 
  ### Day 4:
 
  Today I continued reading back through chapter 4 of the LLM Engineers handbook. I had already read through the chapter briefly but today I went more in depth. In fact, since I am coding out the entire repo, I decided to start creating all of the dependencies for the feature engineering pipeline. The feature engineering pipeline encompasses all 5 portions of the RAG pipeline. So far I have been able to manage going through just the cleaning portion of the pipeline. 
- 
+
+--- 
  #### SingletonMeta:
 
  I made many classes including the metaclasses used to ensure consistency when making connections via Qdrant on multithreaded systems. This was something entirely new I learned about network connections. I didn't know what a lock object or a metaclass was until today. Apparently lock objects, prevent multiple instances of the same class from being created before the first established connection is entirely finished with the process. As I mentioned before, this metaclass, `SingletonMeta`, represents the base class for all vector based storage in the Qdrant database, because all other subclasses involved in the cleaning step inherit from this subclass. Also, all of the cleaning, chunking and dispatching involves intricate connections between these subclasses. In short, without establishing this connection, any of my instances could become corrupted due to parallel creation. 
 
- ####
+---
+ 
  ### Day 5 and 6:
 
 Today I finished hardcoding the full `feature_engineering.py` pipeline. This pipeline is broken down into four primary .py files. I will go into a bit of detail about them and how they all work together to push the features from the extracted documents in Mongo DB into Qdrant via a Zenml Orchestrator pipeline.
+
+---
 
 #### `query_data_warehouse.py`
 
 This file serves as a Zenml step to fetch all of the raw data for the user from the data warehouse (Mongo DB). It is designed to take each of my document classes and fetch all of the data for those classes. My data will consist of LinkedIn posts and GitHub repositories only but there is functionality included to pull Articles from Medium and other domains as well. In this step, the data is pulled in parallel processes to increase efficiency. Alongside the actual content from each document, the metadata is efficiently stored in dictionaries for monitoring and use in the Zenml dashboard.
 
+---
+
 #### `clean.py`
 
 This file serves as a Zenml step to take the queried documents from the `query_data_warehouse.py` step and clean for further transforming and processing. Here we are iterating through all of the documents and delegating all of the cleaning logic to subclasses of a created CleaningDispatcher class. Each subclass is designed to take and clean documents for each of their respective categories. Here the metadata for these cleaned documents is also stored for monitoring. 
 
+---
+
 #### `rag.py`
 This file serves as the next Zenml step to take the cleaned documents and chunk and embed them based on an overlap procedure. Overlapping allows for faster searching when stored in a vector db becuase of pieces of the same text being found in multiple chunks. The chunk settings here will be experimented with when I run the full project to improve the results of my LLM-Twin responses. The authors used a chunk size of 500 and an overlap of 50, but since my dataset is smaller I may opt to go with smaller sizes and overlap parameters. Each chunk also contains its chunk metadata and embedding metadata. 
+
+---
 
 #### `load_to_vector_db.py`
 
@@ -139,11 +150,17 @@ For each state their are individual subclasses for the different data categories
 
 Within each of the subclasses in for the different states there are internal Config classes that point to the given settings for each type of document. This allows me to accurately define each document after storing in the vector db. Also, an enum is defined to aggregate all of the data categories into a single structure.
 
+---
+
 ##### OVM class (VectorBaseDocument)
 This is the OVM base class that will be used to structure a single record's attributes from the vector database. It is initialized as type UUID4 as the unique identifyer and inherits from Pydantics BaseModel class, ABC, and pythons Generic[T] class. This means that all subclasses will adapt, and inherit the settings of this class. If you are curious and want to see more about the structure of this class, please go look at the code as I have documented each of their functions and usage.
 
+---
+
 #### Qdrant 
 The authors chose this vector database as the one to be implemented for the LLM-twin because it is "one of the most popular, robust and feature-rich databases." It was chosen because of how light it is and has a standing in the industry that sets a precedent that it will be around for many years to come. Qdrant is also used by many of the big players in the industry such as Disney, Microsoft, and Discord. It offers the best trade off between RPS (Requests per Second), latency, and index time. This allows querying and indexing of vectors to be quick and efficient for the LLM twin training and generation process.
+
+---
 
 #### Conclusions:
 
@@ -151,10 +168,13 @@ The Rag feature pipeline serves as a quick and efficient method of cleaning, chu
 
 Next I will begin learning about how to create custom datasets to train my llm-twin.
 
+---
 
 ### Day 7:
 #### Supervised Finetuning
 Supervised finetuning is way to take a pre-trained existing llm and finetune it for a potential use case. In this case I want to be able to instruction tune my model on question answer pairs to improve the accuracy of responses from my llm-twin. For Chapter 5, I will be learning how to create a high quality instruction dataset, implement SFT techniques and implement fine-tuning in practice. I have implemented supervised fine-tuning techniques before for text-classification tasks but I have never instruction-tuned a model using the question answer pairs. This will be a great learning experience.
+
+---
 
 #### Creating an instruction tuned dataset
 This is one of the most difficult parts of the fine-tuning process becuase I will need to transform my text into a format that supports both instructions and answers. Data quality is crucial. So there needs to be extensive modifications and monitoring to ensure this quality is obtained. 
@@ -182,4 +202,12 @@ Quick Bullets about the general framework of creating the dataset.
     - Data Curation can be more challenging.
   - Few shot prompting can be a viable alternative to fine-tuning, it depends on the use case.
   - ###### Rule Based filtering:
-    -
+    - Relies o explicit, pre-defined rules to evaluate and filter data samples.
+    - Length filtering sets thresholds for the acceptable length of responses in the dataset.
+      - Extremely short responses often lack the neccessary information needed.
+      - Extremely long responses may contain irrelevant or redundant information.
+      - The maximum length is determined based on the use case. If we need technical sumaries we may opt for longer responses, while shorter ones may be needed for general summaries.
+    - Keyword exclusion focuses on the sample content rather than structure.
+      - Creates a list of keywords or phrases for low-quality content and then filters out samples that contain them.
+    - Format checking ensures that all of the samples meet a designated format. (Important for code checking etc.)
+    - 
