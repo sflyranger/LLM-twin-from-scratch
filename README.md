@@ -250,6 +250,11 @@ Quick Bullets about the general framework of creating the dataset.
       - Reveals errors that can occur from automated proceses.
     - Statistical analysis can reveal insights into the vocabulary density, biases and correct representation.
     - Clustering based on topics can also be used to examine which topics are the mentioned most often and reveal biases and subtopics within different coding languages.
-    - 
-    - 
+  - ##### Data Generation
+    - When public data is unavailable this can be critical, this is particularly so in more specialized applications.
+    - Generation begins with the preparation of prompts that serve as the foundation for generating new examples.
+    - Generally the prompts include specific instructions, examples, and constraints to ensure generated data is in alignment with the desired content and format.
+    - Generated data needs to be controled for inherent biases and errors that come from the underlying model.
+  - ##### Data augmentation
+    -
 Reference: LLM-Engineers-Handbook: Packt Publishing
