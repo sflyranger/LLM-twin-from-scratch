@@ -1,5 +1,8 @@
 from llm_engineering.domain.dataset import DatasetType
 
+# The Mocked reponses here serves as formats for JSON based responses
+# this serves to integrate properly with the structure used to generate responses and store them properly for my class structure.
+
 MOCKED_RESPONSE_INSTRUCT = """
 [
     {"instruction": "<mocked generated instruction> 1", "answer": "mocked generated answer> 1"}, 
