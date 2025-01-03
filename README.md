@@ -256,5 +256,20 @@ Quick Bullets about the general framework of creating the dataset.
     - Generally the prompts include specific instructions, examples, and constraints to ensure generated data is in alignment with the desired content and format.
     - Generated data needs to be controled for inherent biases and errors that come from the underlying model.
   - ##### Data augmentation
-    -
+    - Process of increasing the qunatity and quality of existing data samples.
+    - Evol-Instruct method
+      - Uses LLMs to evolve more simples instructions into more qualitative ones.
+      - There are 2 main strategies, in-depth and in-breadth evolving.
+      - In depths focus is on enhancing complexity by introducing additional requirements for instructions, asking deeper questions, replacing general concepts with more specific ones, introducing multi-step reasoning, and adding more complex data (XML, JSON, code).
+      - In breadth generates entirely new instructions inspired by those that already exist and createing more rare or longer examples for the same domain.
+    - Ultra feedback method is used by focuing more on answer quality instead of the instruction quality.
+      - It uses a more advanced model to evaluate the answers and provide critiques and scores for the answers.
+  - #### Final Remarks
+    - For my datasets I will be implementing a pipeline that does the following:
+      - Takes my raw-text documents
+      - Cleans and Chunks them
+      - Takes the chunks and uses GPT 4o mini to generate instruction answer pairs
+      - Filters these pairs based on pre-defined rules to create the final instruction dataset.
+    - My aim is to finish this step based on the authors templates and then refine after I do my own evaluation when I deploy the project.
+    
 Reference: LLM-Engineers-Handbook: Packt Publishing
